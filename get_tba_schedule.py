@@ -50,7 +50,7 @@ args = parser.parse_args()
 # Get match information.  Headers are needed to authenticate with TBA.
 response = requests.get(f'https://thebluealliance.com/api/v3/event/{args.event_key}/matches',
                         headers={
-                            'X-TBA_Auth-Key': args.tba_key,
+                            'X-TBA-Auth-Key': args.tba_key,
                             'User-Agent': 'Schedule script'
                         })
 
