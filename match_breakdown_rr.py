@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 from enum import Enum
 
-try:
-    import requests
-except ModuleNotFoundError:
-    print('Could not find module requests!  Install requests using the command:\npython3 -m pip install requests')
-    exit(1)
+import urllib, urllib.request, urllib.error
+from urllib.request import Request
 
 # define data class
 class Team_Data:
@@ -73,19 +71,22 @@ if not args.event_key.startswith("2022"):
     print('This script is only for 2022 Rapid React events!')
     exit(1)
 
+request = Request(
+    url=f'https://thebluealliance.com/api/v3/event/{args.event_key}/matches',
+    headers={
+                'X-TBA-Auth-Key': args.tba_key,
+                'User-Agent': 'Schedule script'
+            }
+)
 # Get match information.  Headers are needed to authenticate with TBA.
-response = requests.get(f'https://thebluealliance.com/api/v3/event/{args.event_key}/matches',
-                        headers={
-                            'X-TBA-Auth-Key': args.tba_key,
-                            'User-Agent': 'Schedule script'
-                        })
+try:
+    response = urllib.request.urlopen(request)
+except urllib.error.HTTPError as e:
+    # Handle error responses & provide context on the problem
+    print(f'{e.code} {e.reason}\n{e.read().decode("utf-8")}')
+    exit(e.code)
 
-# Handle error responses & provide context on the problem
-if response.status_code != 200:
-    print(f'Failed to get event information!  TBA returned status code {response.status_code}.\n{response.text}')
-    exit(response.status_code)
-
-data = response.json()
+data = json.loads(response.read().decode('utf-8'))
 # Auto taxi points, Auto cargo total, Teleop total cargo, quintet achieved, foul count, tech-foul count, ranking points, foul points, Score
 TABLE_HEADING = 'Matches,{},AUT_TAXI,TOP_CL,CV_ATP,CV_ACT,CV_TCT,CV_QT,CV_FOUL,CV_TFOUL,CV_RP,CV_FP,CV_SCORE'
 output_data = {
