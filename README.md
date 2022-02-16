@@ -1,6 +1,6 @@
 # FRC Helper scripts
 
-These are a collection of python scripts to pull data from The Blue Alliance.  While they are designed to have as few dependencies as possible, they rely on requests for http support.
+These are a collection of python scripts to pull data from The Blue Alliance.  They are designed to have 0 dependencies, only using the python standard library!
 
 These are also designed to be self-contained, so they can be used outside of this project.
 
