@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+import sys
 import json
 import argparse
 import itertools
@@ -40,8 +42,24 @@ parser.add_argument('--hidenumbers',
                     action='store_true',
                     required=False,
                     help='Don\'t print match numbers before team numbers.')
+parser.add_argument('--output',
+                    '-o',
+                    action='store',
+                    required=False,
+                    help='Output to file instead of stdout')
 
 args = parser.parse_args()
+
+if args.output is not None:
+    if os.path.exists(args.output):
+        confirmation = input('Output path exists! OK to overwrite?: (y/N) ').lower()
+        if confirmation != 'y':
+            print('Operation cancelled.')
+            sys.exit(1)
+
+    output_file = open(args.output, 'w')
+else:
+    output_file = sys.stdout
 
 # Get match information.  Headers are needed to authenticate with TBA.
 request = Request(
@@ -84,4 +102,6 @@ for match in schedule:
     if not args.hide_numbers:
         teams.insert(0, str(match['match_number']))
 
-    print(','.join(teams))
+    output_file.write(','.join(teams) + '\n')
+
+output_file.close()
