@@ -38,7 +38,7 @@ if args.output is not None:
             print('Operation cancelled.')
             sys.exit(1)
 
-    output_file = open(args.output, 'w')
+    output_file = open(args.output, 'w', encoding='utf-8')
 else:
     output_file = sys.stdout
 
